@@ -255,22 +255,22 @@ window.Observable = class Observable
 				req = new XMLHttpRequest()
 
 				Observable
-					.fromEvent(req.onerror)
+					.fromEvent(req, 'error')
 					.subscribe (e) ->
 						o.error new Exception "Error occurred during XMLHttpRequest"
 
 				Observable
-					.fromEvent(req.onreadystatechange)
+					.fromEvent(req, 'readystatechange')
 					.subscribe (ev) ->
 						return if req.readyState != 4
 
-						o.next r.responseText
+						o.next req.responseText
 						o.complete
 
 				try
 					req.open 'GET', uri, true
 					req.setRequestHeader requestHeader, requestValue
-					r.send()
+					req.send()
 				catch e
 					o.error e
 
@@ -297,7 +297,7 @@ window.Observable = class Observable
 
 		return Observable.create (o) ->
 			source.subscribe ((v) ->
-				if ++cnt == howMany
+				if ++count == howMany
 					o.next v
 					o.complete()
 				else
@@ -349,7 +349,7 @@ window.Observable = class Observable
 				s = initialState
 
 				try
-					while conditional(s)
+					while condFunc(s)
 						o.next result(s)
 						s = iterate(s)
 					o.complete()
