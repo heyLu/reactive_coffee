@@ -15,6 +15,7 @@ So... here it is!
  * more examples
  * tests
  * real world usage (working on this ;)
+ * **DOCS**
 
 ## Examples
 
