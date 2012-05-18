@@ -15,10 +15,10 @@ window.Observable = class Observable
 		@observers = []
 		@err = null
 
-		@mainObserver = new Observer ((n) => @observers.forEach (o) -> o.next n), (() ->
+		@mainObserver = new Observer ((n) => @observers.forEach (o) -> o.next n), (() =>
 			@observers.forEach (o) -> o.complete()
 			@dispose()
-		), ((e) ->
+		), ((e) =>
 			@err = e
 			@observers.forEach (o) -> o.error e
 			@dispose())
