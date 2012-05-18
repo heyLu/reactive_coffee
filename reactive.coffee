@@ -86,7 +86,7 @@ window.Observable = class Observable
 		Observable.timer milliseconds, ticks, this
 	unfold: (initialState, condFunc, iterateFunc, resultFunc) ->
 		Observable.unfold initialState, condFunc, iterateFunc, resultFunc, this
-	fromEvent: (event) -> Observable.fromEvent event, this
+	fromEvent: (element, eventName) -> Observable.fromEvent element, eventName, this
 	returnValue: (value) -> Observable.returnValue value, this
 	range: (start, finish, step = 1) ->
 		Observable.range start, finish, step, this
@@ -402,11 +402,11 @@ window.Observable = class Observable
 			source.subscribe ((v) -> list.push v), (() ->
 				o.next list, o.complete()), (e) -> o.error e
 
-	@fromEvent: (event, continuation = null) ->
+	@fromEvent: (element, eventName, continuation = null) ->
 		return Observable.create (o) ->
 			# XXX: Don't know if it works...
 			makeIt = () ->
-				event.add (ev) -> o.next ev
+				element.addEventListener eventName, ((ev) -> o.next ev), false
 
 			if continuation == null
 				makeIt()
