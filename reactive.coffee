@@ -74,6 +74,8 @@ window.Observable = class Observable
 	first: () -> Observable.first this
 	take: (howMany) -> Observable.take this, howMany
 	takeWhile: (condFunc) -> Observable.takeWhile this, condFunc
+	drop: (howMany) -> Observable.drop this, howMany
+	dropWhile: (condFunc) -> Observable.dropWhile this, condFunc
 	firstOf: (sources) ->
 		sources.unshift this
 		Observable.firstOf sources
@@ -303,7 +305,29 @@ window.Observable = class Observable
 				else
 					o.next v
 			), (() -> o.complete()), (e) -> o.error e
-	
+
+	@drop: (source, howMany) ->
+		return Observable.throwE(new Exception "Parameter 'howMany' must be > 0") if howMany < 0
+
+		return Observable.empty() if howMany == 0
+
+		count = 0
+
+		return Observable.create (o) ->
+			source.subscribe ((v) ->
+				o.next v if ++count > howMany
+			), (() -> o.complete()), (e) -> o.error e
+
+	@dropWhile: (source, condFunc) ->
+		dropping = true
+
+		return Observable.create (o) ->
+			source.subscribe ((v) ->
+				if dropping and not condFunc(v)
+					dropping = false
+				o.next v unless dropping
+			), (() -> o.complete()), (e) -> o.error e
+
 	@first: (source) ->
 		return Observable.create (o) ->
 			source.subscribe ((v) ->
