@@ -477,22 +477,23 @@ window.Observable = class Observable
 		leftQueue = []
 		rightQueue = []
 
-		nextQueueFunc = (ownQueue, otherQueue) ->
-			(v) ->
-				ownQueue.push v
-				o.next zipFunc(ownQueue.shift(), otherQueue().shift()) unless otherQueue.length == 0
-
-		completeQueueFunc = (ownQueue, otherQueue, otherDisposable) ->
-			() ->
-				if ownQueue.length == 0
-					o.complete()
-					otherDisposable.dispose()
-
 		return Observable.create (o) ->
-			leftDisposable = left.subscribe nextQueueFunc(leftQueue, rightQueue), completeQueueFunc(leftQueue, rightQueue, rightDisposable), (e) -> o.error e
+			nextQueueFunc = (ownQueue, otherQueue) ->
+				(v) ->
+					ownQueue.push v
+					o.next zipFunc(ownQueue.shift(), otherQueue.shift()) unless otherQueue.length == 0
 
+			completeQueueFunc = (ownQueue, otherDisposable) ->
+				() ->
+					if ownQueue.length == 0
+						o.complete()
+						otherDisposable.dispose()
 
-			rightDisposable = right.subscribe nextQueueFunc(rightQueue, leftQueue), completeQueueFunc(rightQueue, leftQueue, leftDisposable), (e) -> o.error e
+			leftDisposable = left.subscribe nextQueueFunc(leftQueue, rightQueue),
+				completeQueueFunc(leftQueue, rightDisposable), (e) -> o.error e
+
+			rightDisposable = right.subscribe nextQueueFunc(rightQueue, leftQueue),
+				completeQueueFunc(rightQueue, leftDisposable), (e) -> o.error e
 
 	@merge: (sources) ->
 		t = 0
