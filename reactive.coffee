@@ -1,7 +1,7 @@
-window.Observer = class Observer
+Observer = class Observer
 	constructor: (@next, @complete = (() -> undefined), @error = ((e) -> undefined)) ->
 
-window.UnsubscribeWrapper = class UnsubscribeWrapper
+UnsubscribeWrapper = class UnsubscribeWrapper
 	constructor: (@unsubscribeTarget, @observer) ->
 	
 	dispose: () ->
@@ -10,7 +10,7 @@ window.UnsubscribeWrapper = class UnsubscribeWrapper
 			@unsubscribeTarget.observers.split ix, 1
 		undefined
 
-window.Observable = class Observable
+Observable = class Observable
 	constructor: (@observableFunc) ->
 		@observers = []
 		@err = null
@@ -633,3 +633,14 @@ window.Observable = class Observable
 				makeIt()
 			else
 				continuation.subscribe (() -> undefined), (() -> makeIt), (e) -> o.error e
+
+try
+	window.Observer = Observer
+	window.UnsubscribeWrapper = UnsubscribeWrapper
+	window.Observable = Observable
+catch e
+	module.exports = {
+		Observer: Observer,
+		UnsubscribeWrapper: UnsubscribeWrapper,
+		Observable: Observable
+	}
