@@ -427,10 +427,11 @@ Observable = class Observable
 				o.next list, o.complete()), (e) -> o.error e
 
 	@fromEvent: (element, eventName, continuation = null) ->
+		addListener = (element.addEventListener || element.on).bind element
+
 		return Observable.create (o) ->
-			# XXX: Don't know if it works...
 			makeIt = () ->
-				element.addEventListener eventName, ((ev) -> o.next ev), false
+				addListener eventName, ((ev) -> o.next ev), false
 
 			if continuation == null
 				makeIt()
