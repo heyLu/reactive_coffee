@@ -107,7 +107,7 @@ Observable = class Observable
 	@animationFrame: (interval = 0, continuation) ->
 		return Observable.throwE(new Exception "Parameter 'interval' cannot be < 0") if interval < 0
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			makeIt = () ->
 				if interval == 0
 					_loop = (time) ->
@@ -132,7 +132,7 @@ Observable = class Observable
 	@pace: (source, paceInMilliseconds) ->
 		return Observable.throwE(new Exception "Parameter 'paceInMilliseconds must be >= 1'") if paceInMilliseconds < 1
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			buf = new Queue()
 			isComplete = false
 
@@ -150,7 +150,7 @@ Observable = class Observable
 			paceIt()
 
 	@skipWhile: (source, condFun) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			counter = 0
 			trueFlag = true
 
@@ -166,7 +166,7 @@ Observable = class Observable
 	@skip: (source, skipCount = 0) ->
 		return Observable.throwE(new Exception "Parameter 'skipCount' must be >= 0") if skipCount < 0
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			counter = 0
 
 			source.subscribe ((v) ->
@@ -177,7 +177,7 @@ Observable = class Observable
 	@sample: (source, sampleFrequency = 1) ->
 		return Observable.throwE(new Exception "Parameter 'sampleFrequency' must be >= 1") if sampleFrequency < 1
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			counter = 0
 
 			source.subscribe ((v) ->
@@ -187,7 +187,7 @@ Observable = class Observable
 			), (() -> o.complete()), (e) -> o.error e
 	
 	@firstOf: (sources) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			sources.forEach (source) ->
 				d = source.subscribe ((v) ->
 					if firstIn == null
@@ -204,7 +204,7 @@ Observable = class Observable
 				), (e) -> o.error e
 
 	@randomInt: (low, high, intervalLow = 1, intervalHigh = 1, howMany = null, continuation = null) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			makeIt = () ->
 				Observable
 					.random(low, high, intervalLow, intervalHigh, howMany)
@@ -231,7 +231,7 @@ Observable = class Observable
 			else
 				() -> Math.random() * intervalDelta + intervalLow
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			makeIt = () ->
 				nextNum = () ->
 					o.next Math.random() * delta + low
@@ -256,7 +256,7 @@ Observable = class Observable
 				continuation.subscribe (() -> undefined), (() -> makeIt), (e) -> o.error e
 
 	@fromXMLHttpRequest: (uri, requestHeader, requestValue, continuation = null) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			makeIt = () ->
 				req = new XMLHttpRequest()
 
@@ -286,7 +286,7 @@ Observable = class Observable
 				continuation.subscribe (() -> undefined), (() -> makeIt), (e) -> o.error e
 	
 	@takeWhile: (source, condFunc) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				if not condFunc(v)
 					o.complete()
@@ -301,7 +301,7 @@ Observable = class Observable
 
 		count = 0
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				if ++count == howMany
 					o.next v
@@ -315,7 +315,7 @@ Observable = class Observable
 
 		count = 0
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				o.next v if ++count > howMany
 			), (() -> o.complete()), (e) -> o.error e
@@ -323,7 +323,7 @@ Observable = class Observable
 	@dropWhile: (source, condFunc) ->
 		dropping = true
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				if dropping and not condFunc(v)
 					dropping = false
@@ -331,14 +331,14 @@ Observable = class Observable
 			), (() -> o.complete()), (e) -> o.error e
 
 	@first: (source) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				o.next v
 				o.complete()
 			), (() -> o.complete()), (e) -> o.error e
 	
 	@single: (source) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			gotOne = false
 
 			source.subscribe ((v) ->
@@ -349,7 +349,7 @@ Observable = class Observable
 			), (() -> o.complete()), (e) -> o.error e
 	
 	@returnValue: (value, continuation = null) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			makeIt = () ->
 				o.next value
 				o.complete()
@@ -371,7 +371,7 @@ Observable = class Observable
 			Observable.unfold start, ((v) -> v >= finish), ((v) -> v -= step), ((v) -> v), continuation
 
 	@unfold: (initialState, condFunc, iterate, result, continuation = null) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			makeIt = () ->
 				s = initialState
 
@@ -389,7 +389,7 @@ Observable = class Observable
 				continuation.subscribe (() -> undefined), (() -> makeIt), (e) -> o.error e
 
 	@throttle: (source, timeInMilliseconds) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			ignoreValue = false;
 			checker = () ->
 				ignoreValue = false
@@ -407,7 +407,7 @@ Observable = class Observable
 			), (() -> o.complete()), (e) -> o.error e
 
 	@timeout: (source, timeoutInMilliseconds) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			checker = () -> o.error new Exception "Error: Timeout exceeded"
 
 			source.subscribe ((v) ->
@@ -419,20 +419,20 @@ Observable = class Observable
 			handler = setTimeout checker, timeoutInMilliseconds
 
 	@timestamp: (source) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) -> o.next new Date.now()), (() -> o.complete()), (e) -> o.error e
 
 	@toList: (source) ->
 		list = []
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) -> list.push v), (() ->
 				o.next list, o.complete()), (e) -> o.error e
 
 	@fromEvent: (element, eventName, continuation = null) ->
 		addListener = (element.addEventListener || element.on).bind element
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			makeIt = () ->
 				addListener eventName, ((ev) -> o.next ev), false
 
@@ -450,20 +450,20 @@ Observable = class Observable
 	@count : (source) ->
 		count = 0
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) -> ++count), (() ->
 				o.next count
 				o.complete()
 			), (e) -> o.error e
 
 	@apply: (source, applyFunc) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) -> o.next applyFunc(v)), (() -> o.complete()), (e) -> o.error e
 
 	@distinctUntilNot: (source) ->
 		seen = []
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				if v not in seen
 					seen.push v
@@ -473,7 +473,7 @@ Observable = class Observable
 			), (() -> o.complete()), (e) -> o.error e
 
 	@where: (source, filterFunc) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				o.next v if filterFunc v), (() -> o.complete()), (e) -> o.error e
 
@@ -481,7 +481,7 @@ Observable = class Observable
 		leftQueue = []
 		rightQueue = []
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			nextQueueFunc = (ownQueue, otherQueue) ->
 				(v) ->
 					ownQueue.push v
@@ -502,7 +502,7 @@ Observable = class Observable
 	@merge: (sources) ->
 		t = 0
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			sources.forEach (source) ->
 				source.subscribe ((v) -> o.next v),
 					(() -> o.complete() if ++t == sources.length),
@@ -511,7 +511,7 @@ Observable = class Observable
 	@distinct: (source) ->
 		seen = []
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				unless v in seen
 					seen.push v
@@ -525,7 +525,7 @@ Observable = class Observable
 		t = Observable.timer milliseconds, 1
 		t.subscribe ((v) -> undefined), (() -> delaying = false)
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				if not delaying
 					if not buf.length == 0
@@ -544,7 +544,7 @@ Observable = class Observable
 			), (e) -> o.error e
 
 	@contains: (source, value) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				if v != value
 					o.next false
@@ -557,7 +557,7 @@ Observable = class Observable
 		Observable.create (o) -> o.complete()
 
 	@fold: (source, foldFunc, initialValue) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			acc = initialValue
 			source.subscribe ((v) ->
 				acc = foldFunc acc, v
@@ -565,7 +565,7 @@ Observable = class Observable
 			), (() -> o.complete()), (e) -> o.error e
 
 	@any: (source) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				o.next true
 				o.complete()
@@ -577,7 +577,7 @@ Observable = class Observable
 	@buffer: (source, size = 10) ->
 		buf = []
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			source.subscribe ((v) ->
 				buf.add v
 				if buf.length == size
@@ -593,7 +593,7 @@ Observable = class Observable
 	@concat: (sources) ->
 		return Observable.empty() if not sources? or sources.length == 0
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			_concat = (observer, srcs, index) ->
 				srcs[index].subscribe ((v) -> observer.next v), (() ->
 					if ++index < srcs.length
@@ -605,7 +605,7 @@ Observable = class Observable
 			_concat o, sources, 0
 
 	@fromList: (list, continuation = null) ->
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			makeIt = () ->
 				list.forEach (el) -> o.next el
 				o.complete()
@@ -618,7 +618,7 @@ Observable = class Observable
 	@timer: (milliseconds, ticks = -1, continuation = null) ->
 		return Observable.throwE(new Exception "Parameter 'milliseconds' must be >= 1") if milliseconds < 1
 
-		return Observable.create (o) ->
+		Observable.create (o) ->
 			makeIt = () ->
 				if ticks <= 0
 					setInterval (() -> o.next null), milliseconds
@@ -643,8 +643,7 @@ try
 	window.UnsubscribeWrapper = UnsubscribeWrapper
 	window.Observable = Observable
 catch e
-	module.exports = {
-		Observer: Observer,
-		UnsubscribeWrapper: UnsubscribeWrapper,
+	module.exports =
+		Observer: Observer
+		UnsubscribeWrapper: UnsubscribeWrapper
 		Observable: Observable
-	}
