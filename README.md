@@ -13,7 +13,7 @@ So... here it is!
  * a logo (see above)
  * pick a license (probably has to be the one from Reactive Dart)
  * more examples
- * tests
+ * tests for everything
  * real world usage (working on this ;)
  * **DOCS**
 

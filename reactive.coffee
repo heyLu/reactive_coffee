@@ -86,7 +86,7 @@ Observable = class Observable
 	range: (start, finish, step = 1) ->
 		Observable.range start, finish, step, this
 	returnValue: (value) -> Observable.returnValue value, this
-	sample: (sampleFrequency) -> Observable.sample this, sampleFreuqency
+	sample: (sampleFrequency) -> Observable.sample this, sampleFrequency
 	single: () -> Observable.single this
 	skip: (skipCount) -> Observable.skip this, skipCount
 	take: (howMany) -> Observable.take this, howMany
@@ -175,7 +175,7 @@ Observable = class Observable
 			), (() -> o.complete()), (e) -> o.error e
 
 	@sample: (source, sampleFrequency = 1) ->
-		return Observable.throwE(new Exception "Parameter 'sampleFrequency' must be >= 1") if sampleFreqency < 1
+		return Observable.throwE(new Exception "Parameter 'sampleFrequency' must be >= 1") if sampleFrequency < 1
 
 		return Observable.create (o) ->
 			counter = 0
@@ -313,8 +313,6 @@ Observable = class Observable
 	@drop: (source, howMany) ->
 		return Observable.throwE(new Exception "Parameter 'howMany' must be > 0") if howMany < 0
 
-		return Observable.empty() if howMany == 0
-
 		count = 0
 
 		return Observable.create (o) ->
@@ -359,7 +357,8 @@ Observable = class Observable
 			if continuation == null
 				makeIt()
 			else
-				continuation.subscribe (() -> undefined), (() -> makeIt), (e) -> o.error e
+				continuation.subscribe ((v) -> undefined),
+					(() -> makeIt()), (e) -> o.error e
 	
 	@range: (start, finish, step = 1, continuation = null) ->
 		return Observable.throwE(new Exception "Parameter 'step' must be > 0") if step <= 0
@@ -466,7 +465,7 @@ Observable = class Observable
 
 		return Observable.create (o) ->
 			source.subscribe ((v) ->
-				if not v in seen
+				if v not in seen
 					seen.push v
 					o.next v
 				else
