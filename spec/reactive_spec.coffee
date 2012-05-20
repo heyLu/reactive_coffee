@@ -1,5 +1,5 @@
 expect = require 'expect.js'
-rx = require 'reactive'
+rx     = require '../reactive'
 global.Observable = rx.Observable
 
 describe "Observable", ->

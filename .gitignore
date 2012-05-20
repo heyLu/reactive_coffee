@@ -4,3 +4,6 @@ coffee-script.js
 # generated files
 reactive.js
 reactive.min.js
+
+# npm
+node_modules

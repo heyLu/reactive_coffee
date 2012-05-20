@@ -1,0 +1,26 @@
+{
+  "author": "Lucas Stadler",
+  "name": "reactive",
+  "description": "A port of Reactive-Dart (a port of RX.Net/RXJS itself) to Coffee-/Javascript.",
+  "version": "0.0.1",
+  "main": "reactive.coffee",
+  "homepage": "https://github.com/heyLu/reactive_coffee",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/heyLu/reactive_coffee.git"
+  },
+  "scripts": {
+    "test": "mocha -R spec --compilers coffee:coffee-script spec/*"
+  },
+  "dependencies": {
+    "coffee-script": "*"
+  },
+  "devDependencies": {
+    "expect.js": "*",
+    "mocha": "*"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
