@@ -1,5 +1,7 @@
 # Reactive coffee
 
+![build status on travis-ci.org](https://secure.travis-ci.org/heyLu/reactive_coffee.png?branch=master)
+
 **TODO**: Insert cool logo here!
 
 An implementation of Reactive Extensions for *Your Language Here* in
