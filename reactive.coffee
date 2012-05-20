@@ -49,53 +49,57 @@ Observable = class Observable
 		@observers = []
 		undefined
 
-	count: () -> Observable.count this
+	#
+	# Chainable versions of the static Observable.* methods
+	#
+
+	any: () -> Observable.any this
+	animationFrame: (interval = 0) ->
+		Observable.animationFrame interval, this
+	apply: (applyFunc) -> Observable.apply this, applyFunc
+	buffer: (size = 10) -> Observable.buffer this, size
 	contains: (value) -> Observable.contains this, value
 	concat: (list) ->
 		list.unshift this
 		Observable.concat list
-	fold: (foldFunc, initialValue) ->
-		Observable.fold this, foldFunc, initialValue
-	any: () -> Observable.any this
-	buffer: (size = 10) -> Observable.buffer this, size
+	count: () -> Observable.count this
 	delay: (milliseconds) -> Observable.delay this, milliseconds
 	distinct: () -> Observable.distinct this
 	distinctUntilNot: () -> Observable.distinctUntilNot this
-	apply: (applyFunc) -> Observable.apply this, applyFunc
-	merge: (sources) ->
-		sources.unshift this
-		Observable.merge sources
-	zip: (right, zipFunc) -> Observable.zip this, right, zipFunc
-	where: (condFunc) -> Observable.where this, condFunc
-	timestamp: () -> Observable.timestampt this
-	timeout: (milliseconds) -> Observable.timeout this, milliseconds
-	throttle: (milliseconds) -> Observable.throttle this, milliseconds
-	single: () -> Observable.single this
-	first: () -> Observable.first this
-	take: (howMany) -> Observable.take this, howMany
-	takeWhile: (condFunc) -> Observable.takeWhile this, condFunc
 	drop: (howMany) -> Observable.drop this, howMany
 	dropWhile: (condFunc) -> Observable.dropWhile this, condFunc
+	first: () -> Observable.first this
 	firstOf: (sources) ->
 		sources.unshift this
 		Observable.firstOf sources
-	sample: (sampleFrequency) -> Observable.sample this, sampleFreuqency
-	skip: (skipCount) -> Observable.skip this, skipCount
+	fold: (foldFunc, initialValue) ->
+		Observable.fold this, foldFunc, initialValue
+	fromEvent: (element, eventName) -> Observable.fromEvent element, eventName, this
+	fromList: (list) -> Observable.fromList list, this
 	fromXMLHttpRequest: (uri, reqHeader, reqValue) ->
 		Observable.fromXMLHttpRequest uri, reqHeader, reqValue, this
-	fromList: (list) -> Observable.fromList list, this
-	timer: (milliseconds, ticks = -1) ->
-		Observable.timer milliseconds, ticks, this
-	unfold: (initialState, condFunc, iterateFunc, resultFunc) ->
-		Observable.unfold initialState, condFunc, iterateFunc, resultFunc, this
-	fromEvent: (element, eventName) -> Observable.fromEvent element, eventName, this
-	returnValue: (value) -> Observable.returnValue value, this
-	range: (start, finish, step = 1) ->
-		Observable.range start, finish, step, this
+	merge: (sources) ->
+		sources.unshift this
+		Observable.merge sources
 	pace: (paceInMilliseconds) ->
 		Observable.pace this, paceInMilliseconds
-	animationFrame: (interval = 0) ->
-		Observable.animationFrame interval, this
+	range: (start, finish, step = 1) ->
+		Observable.range start, finish, step, this
+	returnValue: (value) -> Observable.returnValue value, this
+	sample: (sampleFrequency) -> Observable.sample this, sampleFreuqency
+	single: () -> Observable.single this
+	skip: (skipCount) -> Observable.skip this, skipCount
+	take: (howMany) -> Observable.take this, howMany
+	takeWhile: (condFunc) -> Observable.takeWhile this, condFunc
+	timeout: (milliseconds) -> Observable.timeout this, milliseconds
+	timer: (milliseconds, ticks = -1) ->
+		Observable.timer milliseconds, ticks, this
+	timestamp: () -> Observable.timestamp this
+	throttle: (milliseconds) -> Observable.throttle this, milliseconds
+	unfold: (initialState, condFunc, iterateFunc, resultFunc) ->
+		Observable.unfold initialState, condFunc, iterateFunc, resultFunc, this
+	where: (condFunc) -> Observable.where this, condFunc
+	zip: (right, zipFunc) -> Observable.zip this, right, zipFunc
 
 	@create: (observableFunc) ->
 		new Observable observableFunc
@@ -587,7 +591,7 @@ Observable = class Observable
 				o.complete()
 			), (e) -> o.error e
 
-	@contains: (sources) ->
+	@concat: (sources) ->
 		return Observable.empty() if not sources? or sources.length == 0
 
 		return Observable.create (o) ->
